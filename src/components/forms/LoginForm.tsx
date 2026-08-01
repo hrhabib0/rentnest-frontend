@@ -8,14 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { email } from "zod";
 import { loginSchema, LoginSchema } from "@/schemas/auth.schema";
-import { error } from "console";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "@/services/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 
