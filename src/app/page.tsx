@@ -1,4 +1,3 @@
-import { getMe } from "@/services/auth";
 import Image from "next/image";
 
 export default async function Home() {

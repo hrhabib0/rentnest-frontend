@@ -206,7 +206,7 @@ export default function RegisterForm() {
                         disabled={isSubmitting}
                         className="h-11 w-full text-base font-semibold cursor-pointer"
                     >
-                        {isSubmitting ? "Creating Account..." : "Register"}
+                        {isSubmitting ? <Loader2>Creating Account...</Loader2> : "Register"}
                     </Button>
 
                     {/* Login Link */}
