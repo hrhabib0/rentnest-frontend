@@ -5,13 +5,19 @@ export interface LoginPayload {
     password: string;
 }
 
-export interface RegisterPayload {
-    name: string;
-    email: string;
-    password: string;
-    role: Exclude<UserRole, "ADMIN">;
-}
-
 export interface LoginResponse {
     user: User;
 }
+
+export type TokenPayload = {
+    id: string;
+    email: string;
+    role: "TENANT" | "ADMIN" | "LANDLORD";
+};
+
+export type RegisterFormData = {
+    name: string;
+    email: string;
+    password: string;
+    role: "TENANT" | "LANDLORD";
+};

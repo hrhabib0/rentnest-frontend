@@ -4,19 +4,20 @@ import {
     ApiResponse,
     LoginPayload,
     LoginResponse,
-    RegisterPayload,
+    RegisterFormData,
     User,
 } from "@/types";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 
-// export const register = async (payload: RegisterPayload) => {
-//     const result = await api.post(
-//         "/auth/register",
-//         payload
-//     );
-// }
+export const registerUser = async (payload: RegisterFormData) => {
+    const result = await api.post(
+        "/auth/register",
+        payload
+    );
+    return result.data
+}
 
 export const login = async (payload: LoginPayload) => {
     const { data } = await api.post(

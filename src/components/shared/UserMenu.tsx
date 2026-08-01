@@ -12,11 +12,11 @@ export default function UserMenu() {
                     Login
                 </Button>
             </Link>
-            {/* <Link href="/register">
+            <Link href="/register">
                 <Button>
                     Registr
                 </Button>
-            </Link> */}
+            </Link>
         </div>
     );
 }
