@@ -22,6 +22,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { logout } from "@/services/auth";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type UserMenuProps = {
     user: {
@@ -32,6 +35,15 @@ type UserMenuProps = {
 };
 
 export default function UserProfileMenu({ user }: UserMenuProps) {
+    const router = useRouter()
+    const handleLogout = async () => {
+        const result = await logout();
+
+        if (result.success) {
+            router.push("/login");
+            toast.success(result.message)
+        }
+    };
     return (
         <DropdownMenu>
             <DropdownMenuTrigger className="outline-none cursor-pointer">
@@ -88,7 +100,7 @@ export default function UserProfileMenu({ user }: UserMenuProps) {
 
                     <DropdownMenuSeparator />
 
-                    <DropdownMenuItem variant="destructive">
+                    <DropdownMenuItem variant="destructive" onClick={handleLogout}>
                         <LogOut className="size-4" />
                         Logout
                     </DropdownMenuItem>

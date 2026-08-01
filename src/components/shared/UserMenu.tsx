@@ -7,16 +7,16 @@ export default function UserMenu() {
         <div className="hidden items-center gap-2 md:flex">
             <Link href="/login">
                 <Button
-                    variant="ghost"
+                    variant="default"
                 >
                     Login
                 </Button>
             </Link>
-            <Link href="/register">
+            {/* <Link href="/register">
                 <Button>
                     Registr
                 </Button>
-            </Link>
+            </Link> */}
         </div>
     );
 }

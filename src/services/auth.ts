@@ -7,6 +7,7 @@ import {
     RegisterPayload,
     User,
 } from "@/types";
+import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 
@@ -32,6 +33,22 @@ export const login = async (payload: LoginPayload) => {
         });
     }
     return data;
+}
+
+export const logout = async () => {
+    const cookieStore = await cookies();
+
+    cookieStore.delete("accessToken");
+    cookieStore.delete("refreshToken");
+
+    revalidateTag("my-profile", {
+        expire: 0
+    });
+
+    return {
+        success: true,
+        message: "Log out Successfully"
+    }
 }
 
 export const getMe = async () => {
