@@ -6,6 +6,7 @@ import PropertyGallery from "@/components/property/PropertyGallery";
 import PropertyInfo from "@/components/property/PropertyInfo";
 import PropertyLandlord from "@/components/property/PropertyLandlord";
 import { getPropertyById } from "@/services/properties";
+import { getMe } from "@/services/auth";
 
 
 
@@ -19,6 +20,8 @@ export default async function PropertyDetailsPage({
     params,
 }: Props) {
     const { id } = await params;
+    const user = await getMe();
+    const userRole = user?.data?.role;
 
     const result = await getPropertyById(id);
 
@@ -52,6 +55,7 @@ export default async function PropertyDetailsPage({
                     id={property.id}
                     rent={property.monthlyRent}
                     status={property.status}
+                    userRole={userRole}
                 />
             </div>
         </section>
