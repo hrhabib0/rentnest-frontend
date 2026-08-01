@@ -14,7 +14,7 @@ export default function UserMenu() {
             </Link>
             <Link href="/register">
                 <Button>
-                    Registr
+                    Register
                 </Button>
             </Link>
         </div>
