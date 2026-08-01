@@ -1,8 +1,8 @@
-export default function TenantDashboard() {
+export default function LandlordDashboard() {
     return (
         <div>
             <h1 className="text-3xl font-bold">
-                Tenant Dashboard
+                Landlord Dashboard
             </h1>
         </div>
     );
