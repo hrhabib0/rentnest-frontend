@@ -43,13 +43,6 @@ export default function PropertyCTA({
 
 
                 {userRole === "TENANT" ? (
-                    // <RequestRentalDialog propertyId={property.id} />
-                    // <Button
-                    //     className="w-full"
-                    //     disabled={status !== "AVAILABLE"}
-                    // >
-                    //     Request to Rent
-                    // </Button>
                     <RequestToRentModal propertyId={id} />
                 ) : !userRole ? (
                     <Button className="w-full" disabled={status !== "AVAILABLE"}>
