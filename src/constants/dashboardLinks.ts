@@ -17,7 +17,7 @@ export const tenantLinks: DashboardLink[] = [
     },
     {
         label: "My Requests",
-        href: "/dashboard/tenant/requests",
+        href: "/dashboard/tenant/my-requests",
         icon: FileText,
     },
     {

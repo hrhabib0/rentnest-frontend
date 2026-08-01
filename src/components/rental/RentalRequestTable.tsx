@@ -14,6 +14,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { IRentalRequest } from "@/types/rental";
+import { CreditCard, Eye } from "lucide-react";
 
 
 type Props = {
@@ -42,7 +43,7 @@ export default function RentalRequestTable({
                 </TableRow>
             </TableHeader>
 
-            {requests.length > 0 ? (<TableBody>
+            <TableBody>
                 {requests.map((request) => (
                     <TableRow key={request.id}>
                         <TableCell>
@@ -105,22 +106,35 @@ export default function RentalRequestTable({
                         </TableCell>
 
                         <TableCell className="text-right">
-                            <Button
-                                size="sm"
-                                variant="outline"
-                            >
-                                <Link
-                                    href={`/properties/${request.property.id}`}
+                            <div className="flex justify-end gap-2">
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                 >
-                                    View
-                                </Link>
-                            </Button>
+                                    <Link
+                                        href={`/properties/${request.property.id}`}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <Eye className="size-4" />
+                                        View
+                                    </Link>
+                                </Button>
+
+                                {request.status === "APPROVED" && (
+                                    <Button
+                                        size="sm"
+                                    >
+                                        <Link href={`/dashboard/tenant/payments/${request.id}`}>
+                                            <CreditCard className="size-4" />
+                                            Pay Now
+                                        </Link>
+                                    </Button>
+                                )}
+                            </div>
                         </TableCell>
                     </TableRow>
                 ))}
-            </TableBody>) : (
-                <div className="font-bold text-red-600 text-center">You have no request right now</div>
-            )}
+            </TableBody>
         </Table>
     );
 }
