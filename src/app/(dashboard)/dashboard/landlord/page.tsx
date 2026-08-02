@@ -1,7 +1,6 @@
 import StatsGrid from "@/components/dashboard/landlord/StatsGrid";
 import { getDashboardStatistics } from "@/services/landlord/getDashboardStats";
 import { notFound } from "next/navigation";
-import { toast } from "sonner";
 
 
 export default async function LandlordDashboardPage() {

@@ -45,7 +45,7 @@ export const landlordLinks: DashboardLink[] = [
     },
     {
         label: "Rental Requests",
-        href: "/dashboard/landlord/requests",
+        href: "/dashboard/landlord/rental-requests",
         icon: FileText,
     },
     {
