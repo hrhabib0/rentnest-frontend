@@ -105,3 +105,50 @@ export const deleteProperty = async (
         };
     }
 };
+
+export const updateProperty = async (
+    propertyId: string,
+    payload: Record<string, unknown>
+) => {
+    try {
+        const cookieStore = await cookies();
+
+        const accessToken =
+            cookieStore.get("accessToken")?.value;
+
+        if (!accessToken) {
+            return {
+                success: false,
+                message: "Unauthorized",
+            };
+        }
+
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/properties/${propertyId}`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Cookie: `accessToken=${accessToken}`,
+                },
+                body: JSON.stringify(payload),
+            }
+        );
+
+        const result = await res.json();
+
+        if (result.success) {
+            revalidatePath("/dashboard/landlord/properties");
+            revalidatePath(`/properties/${propertyId}`);
+        }
+
+        return result;
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            message: "Something went wrong.",
+        };
+    }
+};
