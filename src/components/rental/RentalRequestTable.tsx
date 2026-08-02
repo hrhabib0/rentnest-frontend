@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,6 +16,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { IRentalRequest } from "@/types/rental";
 import { CreditCard, Eye } from "lucide-react";
+import { useTransition } from "react";
+import { createCheckoutSession } from "@/services/payment/payment";
+import { toast } from "sonner";
 
 
 type Props = {
@@ -24,6 +28,20 @@ type Props = {
 export default function RentalRequestTable({
     requests,
 }: Props) {
+    const [isPending, startTransition] = useTransition();
+
+    const handlePayment = (rentalRequestId: string) => {
+        startTransition(async () => {
+            const result = await createCheckoutSession(rentalRequestId);
+            if (!result.success) {
+                toast.error(result.message);
+                return;
+            }
+            window.location.href =
+                result.data.checkoutUrl;
+        });
+    };
+
     return (
         <Table>
             <TableHeader>
@@ -119,14 +137,14 @@ export default function RentalRequestTable({
                                     </Link>
                                 </Button>
 
-                                {request.status === "APPROVED" && (
+                                {request.status === "APPROVED" && !request.payment && (
                                     <Button
                                         size="sm"
+                                        disabled={isPending}
+                                        onClick={() => handlePayment(request.id)}
                                     >
-                                        <Link href={`/dashboard/tenant/payments/${request.id}`}>
-                                            <CreditCard className="size-4" />
-                                            Pay Now
-                                        </Link>
+                                        <CreditCard className="size-4" />
+                                        {isPending ? "Redirecting..." : "Pay Now"}
                                     </Button>
                                 )}
                             </div>
