@@ -11,6 +11,51 @@ interface PropertyResponse {
     data: IProperty[];
 }
 
+export const createProperty = async (
+    payload: Record<string, unknown>
+) => {
+    try {
+        const cookieStore = await cookies();
+
+        const accessToken =
+            cookieStore.get("accessToken")?.value;
+
+        if (!accessToken) {
+            return {
+                success: false,
+                message: "Unauthorized",
+            };
+        }
+
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/landlord/properties`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Cookie: `accessToken=${accessToken}`,
+                },
+                body: JSON.stringify(payload),
+            }
+        );
+
+        const result = await res.json();
+
+        if (result.success) {
+            revalidatePath("/dashboard/landlord/properties");
+        }
+
+        return result;
+    } catch (error) {
+        console.error(error);
+
+        return {
+            success: false,
+            message: "Something went wrong.",
+        };
+    }
+};
+
 export const getProperties = async () => {
     const { data } = await api.get<PropertyResponse>("/properties");
 

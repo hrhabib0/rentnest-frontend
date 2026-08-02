@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { updateProperty } from "@/services/property/properties";
+import { createProperty, updateProperty } from "@/services/property/properties";
 import { toast } from "sonner";
 
 type Props = {
@@ -76,23 +76,17 @@ export default function PropertyForm({
         const payload = {
             title: data.title,
             description: data.description,
-
             address: data.address,
             city: data.city,
-
             monthlyRent: data.monthlyRent,
             size: data.size,
-
             bedrooms: data.bedrooms,
             bathrooms: data.bathrooms,
-
             categoryId: data.categoryId,
-
             amenities: data.amenities
                 .split(",")
                 .map((item) => item.trim())
                 .filter(Boolean),
-
             imageUrls: [
                 data.imageUrl1,
                 data.imageUrl2,
@@ -102,27 +96,22 @@ export default function PropertyForm({
             ].filter(Boolean),
         };
 
-        if (mode === "edit") {
-            startTransition(async () => {
-                const result =
-                    await updateProperty(
-                        property.id,
-                        payload
-                    );
+        startTransition(async () => {
+            let result;
 
-                if (result.success) {
-                    toast.success(result.message);
+            if (mode === "edit") {
+                result = await updateProperty(property.id, payload);
+            } else {
+                result = await createProperty(payload);
+            }
 
-                    router.push(
-                        "/dashboard/landlord/properties"
-                    );
-                } else {
-                    toast.error(result.message);
-                }
-            });
-
-            return;
-        }
+            if (result.success) {
+                toast.success(result.message);
+                router.push("/dashboard/landlord/properties");
+            } else {
+                toast.error(result.message);
+            }
+        });
 
         console.log(payload);
     };
@@ -477,7 +466,9 @@ export default function PropertyForm({
                     disabled={isPending}
                 >
                     {isPending
-                        ? "Saving..."
+                        ? mode === "edit"
+                            ? "Saving Changes..."
+                            : "Creating Property..."
                         : mode === "edit"
                             ? "Save Changes"
                             : "Create Property"}

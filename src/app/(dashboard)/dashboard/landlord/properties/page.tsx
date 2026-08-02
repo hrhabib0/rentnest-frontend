@@ -1,6 +1,8 @@
 import PropertyTable from "@/components/dashboard/landlord/PropertyTable";
+import { Button } from "@/components/ui/button";
 // import DashboardHeader from "@/components/dashboard/shared/DashboardHeader";
 import { getMyProperties } from "@/services/property/properties";
+import Link from "next/link";
 
 
 export default async function MyPropertiesPage() {
@@ -19,11 +21,18 @@ export default async function MyPropertiesPage() {
         <div className="space-y-8">
             {/* <DashboardHeader
             /> */}
-
+            <div className="flex justify-between">
+                <div>My property page</div>
+                <Button>
+                    <Link href="/dashboard/landlord/properties/create">
+                        Add Property
+                    </Link>
+                </Button>
+            </div>
             <PropertyTable
                 properties={response.data}
             />
-            <div>My property page</div>
+
         </div>
     );
 }
