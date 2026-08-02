@@ -13,6 +13,7 @@ import {
     tenantLinks,
 } from "@/constants/dashboardLinks";
 import { User } from "@/types";
+import { logout } from "@/services/auth";
 
 // import { logoutAction } from "@/actions/auth/logoutAction";
 
@@ -37,9 +38,9 @@ export default function DashboardSidebar({
         return pathname.startsWith(`${href}/`);
     };
 
-    // const handleLogout = async () => {
-    //     await logoutAction();
-    // };
+    const handleLogout = async () => {
+        await logout();
+    };
     return (
         <aside className="flex h-screen w-72 flex-col border-r bg-background">
             {/* Logo */}
@@ -83,7 +84,7 @@ export default function DashboardSidebar({
                 <Button
                     variant="outline"
                     className="w-full justify-start"
-                // onClick={handleLogout}
+                    onClick={handleLogout}
                 >
                     <LogOut className="mr-2 size-4" />
 

@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
-
-import DashboardHeader from "@/components/dashboard/shared/DashboardHeader";
 import DashboardSidebar from "@/components/dashboard/shared/DashboardSidebar";
 import { getMe } from "@/services/auth";
 
@@ -31,9 +29,9 @@ export default async function DashboardLayout({
 
             {/* Main Content */}
             <div className="flex flex-1 flex-col">
-                <DashboardHeader
+                {/* <DashboardHeader
                     user={user.data}
-                />
+                /> */}
 
                 <main className="flex-1 overflow-y-auto p-6">
                     {children}

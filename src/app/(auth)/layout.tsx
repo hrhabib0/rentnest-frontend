@@ -1,11 +1,22 @@
-export default function AuthLayout({
-    children
-}: {
-    children: React.ReactNode;
-}) {
+import Navbar from "@/components/shared/Navbar"
+import { getMe } from "@/services/auth"
+
+const authGroupLayout = async (
+    {
+        children
+    }: {
+        children: React.ReactNode
+    }
+) => {
+    const user = await getMe()
     return (
-        <main className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
-            {children}
-        </main>
+        <div className="space-y-6">
+            <Navbar user={user} />
+            <div>
+                {children}
+            </div>
+        </div>
     )
 }
+
+export default authGroupLayout

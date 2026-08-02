@@ -1,5 +1,5 @@
 import RentalRequestsTable from "@/components/dashboard/landlord/RentalRequestTable";
-import DashboardHeader from "@/components/dashboard/shared/DashboardHeader";
+import DashboardHeading from "@/components/dashboard/shared/DashboardHeading";
 import { getReceivedRentalRequests } from "@/services/rental/rentalRequest";
 
 
@@ -19,12 +19,13 @@ export default async function RentalRequestsPage() {
 
     return (
         <div className="space-y-8">
-            {/* <DashboardHeader/> */}
-
+            <DashboardHeading
+                title="Rental Request"
+                description="Manage your all rental request of your properties."
+            />
             <RentalRequestsTable
                 requests={response.data}
             />
-            <div>landlord request page</div>
         </div>
     );
 }

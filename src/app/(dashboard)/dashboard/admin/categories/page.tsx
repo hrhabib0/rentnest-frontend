@@ -1,4 +1,5 @@
 import CategoriesTable from "@/components/dashboard/admin/categories/CategoriesTable";
+import DashboardHeading from "@/components/dashboard/shared/DashboardHeading";
 import { getCategories } from "@/services/category/catergories";
 
 
@@ -9,10 +10,10 @@ export default async function CategoriesPage() {
 
     return (
         <div className="space-y-6">
-            {/* <DashboardHeading
+            <DashboardHeading
                 title="Categories"
                 description="Manage property categories."
-            /> */}
+            />
 
             <CategoriesTable categories={categories} />
         </div>

@@ -1,11 +1,8 @@
 "use server"
 import api from "@/lib/api";
 import {
-    ApiResponse,
     LoginPayload,
-    LoginResponse,
     RegisterFormData,
-    User,
 } from "@/types";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";

@@ -1,4 +1,5 @@
 import UsersTable from "@/components/dashboard/admin/users/UsersTable";
+import DashboardHeading from "@/components/dashboard/shared/DashboardHeading";
 import { getAllUsers } from "@/services/admin/admin";
 
 export default async function AdminUsersPage() {
@@ -8,8 +9,10 @@ export default async function AdminUsersPage() {
     // const meta = result.meta;
     return (
         <div className="space-y-6">
-            {/* <DashboardHeader user={user.data} /> */}
-            Admin dash board
+            <DashboardHeading
+                title="Users"
+                description="Manage all registered users."
+            />
             <UsersTable users={users}></UsersTable>
         </div>
     );

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 
 import {
     Table,
@@ -11,7 +10,6 @@ import {
 } from "@/components/ui/table";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 import { ILandlordProperty } from "@/types/landlordProperty";
 import PropertyActionButtons from "./PropertyActionButtons";
