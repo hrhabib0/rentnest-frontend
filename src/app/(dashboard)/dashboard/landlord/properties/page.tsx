@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default async function MyPropertiesPage() {
     const response = await getMyProperties();
-    console.log(response)
+
 
     if (!response.success) {
         return (

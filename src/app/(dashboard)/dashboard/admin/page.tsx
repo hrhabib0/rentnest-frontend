@@ -4,9 +4,7 @@ import { Building2, FileText, Users, Wallet } from "lucide-react";
 
 export default async function AdminDashboardPage() {
     const result = await getDashboardStats();
-
     const stats = result.data;
-    console.log(result)
 
     return (
         <div className="space-y-8">

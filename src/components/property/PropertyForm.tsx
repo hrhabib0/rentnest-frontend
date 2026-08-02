@@ -113,7 +113,7 @@ export default function PropertyForm({
             }
         });
 
-        console.log(payload);
+        // console.log(payload);
     };
 
     return (

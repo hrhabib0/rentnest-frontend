@@ -29,7 +29,6 @@ type Props = {
 export default function RentalRequestTable({
     requests,
 }: Props) {
-    console.log(requests, "request payment")
     const [isPending, startTransition] = useTransition();
 
     const handlePayment = (rentalRequestId: string) => {
