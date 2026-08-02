@@ -15,10 +15,11 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { IRentalRequest } from "@/types/rental";
-import { CreditCard, Eye } from "lucide-react";
+import { CheckCircle, CreditCard, Eye } from "lucide-react";
 import { useTransition } from "react";
 import { createCheckoutSession } from "@/services/payment/payment";
 import { toast } from "sonner";
+import { Badge } from "../ui/badge";
 
 
 type Props = {
@@ -28,6 +29,7 @@ type Props = {
 export default function RentalRequestTable({
     requests,
 }: Props) {
+    console.log(requests, "request payment")
     const [isPending, startTransition] = useTransition();
 
     const handlePayment = (rentalRequestId: string) => {
@@ -137,7 +139,7 @@ export default function RentalRequestTable({
                                     </Link>
                                 </Button>
 
-                                {request.status === "APPROVED" && !request.payment && (
+                                {/* {request.status === "APPROVED" && !request.payment && (
                                     <Button
                                         size="sm"
                                         disabled={isPending}
@@ -146,6 +148,26 @@ export default function RentalRequestTable({
                                         <CreditCard className="size-4" />
                                         {isPending ? "Redirecting..." : "Pay Now"}
                                     </Button>
+                                )} */}
+                                {request.payment?.status ? (
+                                    <Badge
+                                        variant="outline"
+                                        className="cursor-default border-green-600 bg-green-50 text-green-700 transition-all duration-200 hover:scale-105 hover:border-green-700 hover:bg-green-100 hover:text-green-800 dark:border-green-700 dark:bg-green-950 dark:text-green-400 dark:hover:bg-green-900"
+                                    >
+                                        <CheckCircle className="mr-1 size-3.5 fill-green-600 text-white dark:fill-green-500" />
+                                        Paid
+                                    </Badge>
+                                ) : (
+                                    request.status === "APPROVED" && (
+                                        <Button
+                                            size="sm"
+                                            disabled={isPending}
+                                            onClick={() => handlePayment(request.id)}
+                                        >
+                                            <CreditCard className="size-4" />
+                                            {isPending ? "Redirecting..." : "Pay Now"}
+                                        </Button>
+                                    )
                                 )}
                             </div>
                         </TableCell>

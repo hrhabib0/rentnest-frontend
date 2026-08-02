@@ -5,6 +5,15 @@ export type RentalRequestStatus =
     | "APPROVED"
     | "REJECTED";
 
+export type TPayment = {
+    id: string;
+    status: "PENDING" | "PAID" | "FAILED";
+    amount: string;
+    transactionId: string;
+    provider: "STRIPE";
+    paidAt: string | null;
+};
+
 export interface IRentalRequest {
     id: string;
     tenantId: string;
@@ -21,7 +30,7 @@ export interface IRentalRequest {
 
     property: IProperty;
 
-    payment?: null;
+    payment?: TPayment | null;
 }
 
 export interface IReceivedRentalRequest {
