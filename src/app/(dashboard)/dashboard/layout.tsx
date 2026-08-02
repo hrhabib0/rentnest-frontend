@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
 
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
+import DashboardHeader from "@/components/dashboard/shared/DashboardHeader";
+import DashboardSidebar from "@/components/dashboard/shared/DashboardSidebar";
 import { getMe } from "@/services/auth";
 
 

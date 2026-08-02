@@ -24,7 +24,6 @@ type Props = {
 export default function RentalRequestTable({
     requests,
 }: Props) {
-    console.log(requests, "request")
     return (
         <Table>
             <TableHeader>

@@ -4,7 +4,7 @@ import {
     XCircle,
 } from "lucide-react";
 
-import StatsCard from "@/components/dashboard/tenant/StatsCard";
+import StatsCard from "@/components/dashboard/shared/StatsCard";
 import { getMyRentalRequests } from "@/services/rental/rentalRequest";
 import RentalRequestTable from "@/components/rental/RentalRequestTable";
 
@@ -13,7 +13,6 @@ export default async function TenantDashboard() {
     const response = await getMyRentalRequests();
 
     const requests = response.data ?? [];
-    console.log(requests, "rques revie")
 
     const stats = requests.reduce(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

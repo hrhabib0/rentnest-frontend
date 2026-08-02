@@ -24,7 +24,6 @@ export default function DashboardSidebar({
     user,
 }: DashboardSidebarProps) {
     const pathname = usePathname();
-    console.log(user.role, "user role")
     const links =
         user.role === "TENANT"
             ? tenantLinks
