@@ -1,6 +1,6 @@
 import EmptyProperty from "@/components/property/EmptyProperty";
 import PropertyGrid from "@/components/property/PropertyGrid";
-import { getProperties } from "@/services/properties";
+import { getProperties } from "@/services/property/properties";
 
 export default async function PropertiesPage() {
     const result = await getProperties();

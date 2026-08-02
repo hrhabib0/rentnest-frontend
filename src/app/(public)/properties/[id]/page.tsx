@@ -5,7 +5,7 @@ import PropertyCTA from "@/components/property/PropertyCTA";
 import PropertyGallery from "@/components/property/PropertyGallery";
 import PropertyInfo from "@/components/property/PropertyInfo";
 import PropertyLandlord from "@/components/property/PropertyLandlord";
-import { getPropertyById } from "@/services/properties";
+import { getPropertyById } from "@/services/property/properties";
 import { getMe } from "@/services/auth";
 
 
