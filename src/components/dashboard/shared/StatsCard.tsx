@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 type StatsCardProps = {
     title: string;
-    value: number;
+    value: number | string;
     icon: LucideIcon;
     description?: string;
 };
