@@ -1,36 +1,202 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏡 RentNest Frontend
 
-## Getting Started
+RentNest is a modern full-stack rental property management platform that connects **Tenants**, **Landlords**, and **Administrators** in one secure application. Users can browse rental properties, submit rental requests, complete online payments via Stripe, and manage properties through role-based dashboards.
 
-First, run the development server:
+---
+
+## 🌐 Live Demo
+
+* **Frontend:** https://rentnest-frontend-pi.vercel.app/
+* **Backend:** https://rentnest-backend-green.vercel.app/
+* **API Documentation:** See `API_INTEGRATION.md`
+
+---
+
+## ✨ Features
+
+### 🔐 Authentication
+
+* User registration and login
+* JWT authentication
+* Refresh token support
+* Secure HTTP-only cookie authentication
+* Role-based authorization
+
+### 👤 Tenant
+
+* Browse available rental properties
+* View detailed property information
+* Submit rental requests
+* Pay rent securely using Stripe Checkout
+* View rental request status
+* Manage personal profile
+
+### 🏠 Landlord
+
+* Create new property listings
+* Edit existing properties
+* Delete properties
+* Review rental requests
+* Approve or reject rental requests
+
+### 🛡️ Admin
+
+* Dashboard overview
+* View platform statistics
+* Manage users
+* Activate/Block users
+* Manage property categories
+
+### 💳 Payment
+
+* Stripe Checkout integration
+* Secure online payment flow
+* Payment status tracking
+
+### 👤 Profile
+
+* View personal information
+* Update profile details
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* Next.js 16 (App Router)
+* React 19
+* TypeScript
+* Tailwind CSS
+* shadcn/ui
+* Lucide React
+* Server Actions
+* Sonner Toast
+
+### Backend
+
+* Node.js
+* Express.js
+* TypeScript
+* Prisma ORM
+* PostgreSQL
+* JWT Authentication
+* Stripe API
+
+---
+
+## 📂 Project Structure
+
+```text
+app/
+components/
+services/
+actions/
+hooks/
+types/
+lib/
+```
+
+---
+
+## 🚀 Getting Started
+
+### Clone the repository
+
+```bash
+git clone <frontend-repository-url>
+```
+
+```bash
+cd rentnest-frontend
+```
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+Create a `.env.local` file:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api
+```
+
+### Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📡 API Integration
 
-To learn more about Next.js, take a look at the following resources:
+The frontend communicates with the backend using a centralized service layer.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+For detailed endpoint mappings, see:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+API_INTEGRATION.md
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔒 Authentication Flow
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* User logs in with email and password.
+* Backend issues Access Token and Refresh Token.
+* Tokens are stored securely in HTTP-only cookies.
+* Protected routes are accessible based on user roles.
+* Expired access tokens are refreshed automatically.
+
+---
+
+## 📸 Screenshots
+
+Add screenshots here before submission.
+
+Example:
+
+* Home Page
+* Property Listing
+* Property Details
+* Tenant Dashboard
+* Landlord Dashboard
+* Admin Dashboard
+* Stripe Checkout
+* Profile Page
+
+---
+
+## 🔮 Future Improvements
+
+* Cloudinary image upload
+* Advanced property search and filters
+* Wishlist / Favorites
+* Email notifications
+* Dashboard analytics
+* Reviews and ratings
+* Real-time notifications
+* Responsive landing page redesign
+
+---
+
+## 👨‍💻 Author
+
+**Md. Habibur Rahman**
+
+---
+
+## 📄 License
+
+This project was developed for educational purposes as part of a full-stack web development assignment.
