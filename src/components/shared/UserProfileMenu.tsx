@@ -90,7 +90,7 @@ export default function UserProfileMenu({ user }: UserMenuProps) {
 
                     <DropdownMenuItem>
                         <Link
-                            href="/profile"
+                            href="/dashboard/profile"
                             className="flex w-full items-center gap-2"
                         >
                             <User className="size-4" />

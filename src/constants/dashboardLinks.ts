@@ -27,7 +27,7 @@ export const tenantLinks: DashboardLink[] = [
     },
     {
         label: "Profile",
-        href: "/profile",
+        href: "/dashboard/profile",
         icon: User,
     },
 ];
@@ -50,7 +50,7 @@ export const landlordLinks: DashboardLink[] = [
     },
     {
         label: "Profile",
-        href: "/profile",
+        href: "/dashboard/profile",
         icon: User,
     },
 ];
@@ -73,7 +73,7 @@ export const adminLinks: DashboardLink[] = [
     },
     {
         label: "Profile",
-        href: "/profile",
+        href: "/dashboard/profile",
         icon: User,
     },
 ];
