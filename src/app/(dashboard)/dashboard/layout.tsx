@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"; // deployment issue solution by ai.
+
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import DashboardSidebar from "@/components/dashboard/shared/DashboardSidebar";

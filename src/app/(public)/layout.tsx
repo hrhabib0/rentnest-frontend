@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"; // deployment issue solution by ai.
+
 import Navbar from "@/components/shared/Navbar";
 import { getMe } from "@/services/auth";
 
