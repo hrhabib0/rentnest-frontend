@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic"; // deployment issue solution by ai.
 
+import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { getMe } from "@/services/auth";
 
@@ -15,6 +16,7 @@ const PublicGroupLayout = async (
         <div>
             <Navbar user={user} />
             {children}
+            <Footer />
         </div>
     )
 }
