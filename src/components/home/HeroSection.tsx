@@ -53,6 +53,7 @@ export default function HeroSection() {
 
                     <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                         <Button
+                            nativeButton={false}
                             size="lg"
                             className="h-12 rounded-full px-6"
                             render={<Link href="/properties" />}
@@ -62,6 +63,7 @@ export default function HeroSection() {
                         </Button>
 
                         <Button
+                            nativeButton={false}
                             size="lg"
                             variant="outline"
                             className="h-12 rounded-full border-primary/25 px-6"
