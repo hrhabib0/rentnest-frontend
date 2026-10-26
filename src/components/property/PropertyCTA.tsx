@@ -1,6 +1,9 @@
-
 import Link from "next/link";
-import { ArrowRight, CalendarDays, ShieldCheck } from "lucide-react";
+import {
+    ArrowRight,
+    CalendarDays,
+    ShieldCheck,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +23,15 @@ export default function PropertyCTA({
     userRole,
 }: PropertyCTAProps) {
     const isAvailable = status === "AVAILABLE";
-    const formattedRent = Number(rent).toLocaleString("en-BD");
+    const numericRent = Number(rent);
+    const formattedRent = Number.isFinite(numericRent)
+        ? numericRent.toLocaleString("en-BD")
+        : rent;
+
+    const formattedStatus = status
+        .toLowerCase()
+        .replaceAll("_", " ")
+        .replace(/\b\w/g, (character) => character.toUpperCase());
 
     return (
         <aside className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm shadow-primary/5 sm:p-6 lg:shadow-lg lg:shadow-primary/5">
@@ -44,7 +55,7 @@ export default function PropertyCTA({
                     </span>
 
                     <Badge variant={isAvailable ? "default" : "secondary"}>
-                        {isAvailable ? "Available" : status.replaceAll("_", " ")}
+                        {isAvailable ? "Available" : formattedStatus}
                     </Badge>
                 </div>
 
@@ -52,7 +63,7 @@ export default function PropertyCTA({
                     isAvailable ? (
                         <RequestToRentModal propertyId={id} />
                     ) : (
-                        <Button className="w-full" disabled>
+                        <Button className="h-11 w-full rounded-full" disabled>
                             Currently unavailable
                         </Button>
                     )
@@ -66,7 +77,7 @@ export default function PropertyCTA({
                         <ArrowRight className="size-4" />
                     </Button>
                 ) : (
-                    <Button className="w-full" disabled>
+                    <Button className="h-11 w-full rounded-full" disabled>
                         Only tenants can request rentals
                     </Button>
                 )}
