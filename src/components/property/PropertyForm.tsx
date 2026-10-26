@@ -1,23 +1,65 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import {
+    ArrowLeft,
+    ArrowRight,
+    Building2,
+    Images,
+    MapPin,
+    Sparkles,
+} from "lucide-react";
+import { toast } from "sonner";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { createProperty, updateProperty } from "@/services/property/properties";
-import { toast } from "sonner";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {
+    createProperty,
+    updateProperty,
+} from "@/services/property/properties";
+
+type PropertyCategory = {
+    id: string;
+    name: string;
+};
+
+type EditableProperty = {
+    id: string;
+    title: string;
+    description: string;
+    address: string;
+    city: string;
+    monthlyRent: number | string;
+    size: number;
+    bedrooms: number;
+    bathrooms: number;
+    categoryId: string;
+    amenities: string[];
+    imageUrls: string[];
+};
 
 type Props = {
     mode: "create" | "edit";
-    property?: any;
-    categories: any[];
+    property?: EditableProperty;
+    categories: PropertyCategory[];
 };
 
 type PropertyFormValues = {
@@ -38,11 +80,38 @@ type PropertyFormValues = {
     imageUrl5: string;
 };
 
+const isValidImageUrl = (value: string) => {
+    if (!value.trim()) return true;
+
+    try {
+        const url = new URL(value.trim());
+        return url.protocol === "https:" || url.protocol === "http:";
+    } catch {
+        return false;
+    }
+};
+
+function FormError({ message }: { message?: string }) {
+    if (!message) return null;
+
+    return (
+        <p className="text-sm text-destructive" role="alert">
+            {message}
+        </p>
+    );
+}
+
 export default function PropertyForm({
     mode,
     property,
     categories,
 }: Props) {
+    const router = useRouter();
+    const [isPending, startTransition] = useTransition();
+    const [submitError, setSubmitError] = useState<string | null>(null);
+
+    const isEdit = mode === "edit";
+
     const {
         register,
         control,
@@ -55,9 +124,9 @@ export default function PropertyForm({
             address: property?.address ?? "",
             city: property?.city ?? "",
             monthlyRent: Number(property?.monthlyRent) || 0,
-            size: property?.size || 0,
-            bedrooms: property?.bedrooms || 1,
-            bathrooms: property?.bathrooms || 1,
+            size: property?.size ?? 0,
+            bedrooms: property?.bedrooms ?? 1,
+            bathrooms: property?.bathrooms ?? 1,
             categoryId: property?.categoryId ?? "",
             amenities: property?.amenities?.join(", ") ?? "",
             imageUrl1: property?.imageUrls?.[0] ?? "",
@@ -67,17 +136,20 @@ export default function PropertyForm({
             imageUrl5: property?.imageUrls?.[4] ?? "",
         },
     });
-    const router = useRouter();
-
-    const [isPending, startTransition] =
-        useTransition();
 
     const onSubmit = (data: PropertyFormValues) => {
+        if (isEdit && !property?.id) {
+            toast.error("Unable to identify the property to update.");
+            return;
+        }
+
+        setSubmitError(null);
+
         const payload = {
-            title: data.title,
-            description: data.description,
-            address: data.address,
-            city: data.city,
+            title: data.title.trim(),
+            description: data.description.trim(),
+            address: data.address.trim(),
+            city: data.city.trim(),
             monthlyRent: data.monthlyRent,
             size: data.size,
             bedrooms: data.bedrooms,
@@ -93,389 +165,449 @@ export default function PropertyForm({
                 data.imageUrl3,
                 data.imageUrl4,
                 data.imageUrl5,
-            ].filter(Boolean),
+            ]
+                .map((url) => url.trim())
+                .filter(Boolean),
         };
 
         startTransition(async () => {
-            let result;
+            try {
+                const result = isEdit
+                    ? await updateProperty(property!.id, payload)
+                    : await createProperty(payload);
 
-            if (mode === "edit") {
-                result = await updateProperty(property.id, payload);
-            } else {
-                result = await createProperty(payload);
-            }
+                if (!result.success) {
+                    const message =
+                        result.message || "Unable to save the property.";
+                    setSubmitError(message);
+                    toast.error(message);
+                    return;
+                }
 
-            if (result.success) {
-                toast.success(result.message);
+                toast.success(
+                    result.message ||
+                    (isEdit
+                        ? "Property updated successfully."
+                        : "Property created successfully."),
+                );
+
                 router.push("/dashboard/landlord/properties");
-            } else {
-                toast.error(result.message);
+                router.refresh();
+            } catch {
+                const message =
+                    "Something went wrong. Please try again.";
+                setSubmitError(message);
+                toast.error(message);
             }
         });
-
-        // console.log(payload);
     };
+
+    const numericRules = {
+        required: "This field is required",
+        valueAsNumber: true,
+        validate: {
+            finite: (value: number) =>
+                Number.isFinite(value) || "Enter a valid number",
+        },
+    };
+
+    const imageFields = [
+        { name: "imageUrl1", label: "Cover image URL", required: true },
+        { name: "imageUrl2", label: "Image URL 2", required: false },
+        { name: "imageUrl3", label: "Image URL 3", required: false },
+        { name: "imageUrl4", label: "Image URL 4", required: false },
+        { name: "imageUrl5", label: "Image URL 5", required: false },
+    ] as const;
 
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-6"
+            className="mx-auto w-full max-w-4xl space-y-6"
         >
-            <Card>
+            <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                    <Building2 className="size-4" />
+                    Landlord dashboard
+                </div>
+
+                <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                    {isEdit ? "Edit Property" : "List Your Property"}
+                </h1>
+
+                <p className="max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+                    {isEdit
+                        ? "Update your property information, amenities, and images."
+                        : "Provide accurate property details to help potential tenants find their next home."}
+                </p>
+            </div>
+
+            <Card className="rounded-2xl border-border/70 shadow-sm">
                 <CardHeader>
-                    <CardTitle>
-                        Basic Information
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                        <Building2 className="size-5 text-primary" />
+                        Basic information
                     </CardTitle>
-                </CardHeader>
-
-                <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="title">
-                            Property Title
-                        </Label>
-
-                        <Input
-                            id="title"
-                            placeholder="Luxury Villa with Private Garden"
-                            {...register("title", {
-                                required: "Title is required",
-                            })}
-                        />
-
-                        {errors.title && (
-                            <p className="text-sm text-destructive">
-                                {errors.title.message}
-                            </p>
-                        )}
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="description">
-                            Description
-                        </Label>
-
-                        <Textarea
-                            id="description"
-                            rows={6}
-                            placeholder="Describe your property..."
-                            {...register("description", {
-                                required:
-                                    "Description is required",
-                            })}
-                        />
-
-                        {errors.description && (
-                            <p className="text-sm text-destructive">
-                                {errors.description.message}
-                            </p>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Location</CardTitle>
-                </CardHeader>
-
-                <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="address">
-                            Address
-                        </Label>
-
-                        <Input
-                            id="address"
-                            placeholder="Road 10, Block C"
-                            {...register("address", {
-                                required: "Address is required",
-                            })}
-                        />
-
-                        {errors.address && (
-                            <p className="text-sm text-destructive">
-                                {errors.address.message}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="city">
-                            City
-                        </Label>
-
-                        <Input
-                            id="city"
-                            placeholder="Dhaka"
-                            {...register("city", {
-                                required: "City is required",
-                            })}
-                        />
-
-                        {errors.city && (
-                            <p className="text-sm text-destructive">
-                                {errors.city.message}
-                            </p>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Property Details</CardTitle>
-                </CardHeader>
-
-                <CardContent>
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <Label htmlFor="monthlyRent">
-                                Monthly Rent (৳)
-                            </Label>
-
-                            <Input
-                                id="monthlyRent"
-                                type="number"
-                                placeholder="50000"
-                                {...register("monthlyRent", {
-                                    required: "Monthly rent is required",
-                                    valueAsNumber: true,
-                                    min: {
-                                        value: 1,
-                                        message: "Rent must be greater than 0",
-                                    },
-                                })}
-                            />
-
-                            {errors.monthlyRent && (
-                                <p className="text-sm text-destructive">
-                                    {errors.monthlyRent.message}
-                                </p>
-                            )}
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="size">
-                                Property Size (sq ft)
-                            </Label>
-
-                            <Input
-                                id="size"
-                                type="number"
-                                placeholder="1800"
-                                {...register("size", {
-                                    required: "Property size is required",
-                                    valueAsNumber: true,
-                                })}
-                            />
-
-                            {errors.size && (
-                                <p className="text-sm text-destructive">
-                                    {errors.size.message}
-                                </p>
-                            )}
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="bedrooms">
-                                Bedrooms
-                            </Label>
-
-                            <Input
-                                id="bedrooms"
-                                type="number"
-                                {...register("bedrooms", {
-                                    required: "Bedrooms are required",
-                                    valueAsNumber: true,
-                                    min: {
-                                        value: 1,
-                                        message: "Minimum 1 bedroom",
-                                    },
-                                })}
-                            />
-
-                            {errors.bedrooms && (
-                                <p className="text-sm text-destructive">
-                                    {errors.bedrooms.message}
-                                </p>
-                            )}
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="bathrooms">
-                                Bathrooms
-                            </Label>
-
-                            <Input
-                                id="bathrooms"
-                                type="number"
-                                {...register("bathrooms", {
-                                    required: "Bathrooms are required",
-                                    valueAsNumber: true,
-                                    min: {
-                                        value: 1,
-                                        message: "Minimum 1 bathroom",
-                                    },
-                                })}
-                            />
-
-                            {errors.bathrooms && (
-                                <p className="text-sm text-destructive">
-                                    {errors.bathrooms.message}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>
-                        Category & Amenities
-                    </CardTitle>
-                </CardHeader>
-
-                <CardContent className="space-y-6"><Controller
-                    control={control}
-                    name="categoryId"
-                    rules={{
-                        required: "Category is required",
-                    }}
-                    render={({ field }) => (
-                        <div className="space-y-2">
-                            <Label>Category</Label>
-
-                            <Select
-                                value={field.value}
-                                onValueChange={field.onChange}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-
-                                <SelectContent>
-                                    {categories.map((category) => (
-                                        <SelectItem
-                                            key={category.id}
-                                            value={category.id}
-                                        >
-                                            {category.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-
-                            {errors.categoryId && (
-                                <p className="text-sm text-destructive">
-                                    {errors.categoryId.message}
-                                </p>
-                            )}
-                        </div>
-                    )}
-                /><div className="space-y-2">
-                        <Label htmlFor="amenities">
-                            Amenities
-                        </Label>
-
-                        <Input
-                            id="amenities"
-                            placeholder="Lift, Parking, WiFi"
-                            {...register("amenities")}
-                        />
-
-                        <p className="text-xs text-muted-foreground">
-                            Separate amenities using commas.
-                        </p>
-                    </div></CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>
-                        Property Images
-                    </CardTitle>
+                    <CardDescription>
+                        Add a clear title and a helpful description of your property.
+                    </CardDescription>
                 </CardHeader>
 
                 <CardContent className="space-y-5">
                     <div className="space-y-2">
-                        <Label htmlFor="imageUrl1">
-                            Image URL 1
-                        </Label>
-
+                        <Label htmlFor="title">Property title *</Label>
                         <Input
-                            id="imageUrl1"
-                            placeholder="https://..."
-                            {...register("imageUrl1", {
-                                required: "At least one image is required",
+                            id="title"
+                            placeholder="e.g. Spacious 3-bedroom apartment in Dhanmondi"
+                            aria-invalid={!!errors.title}
+                            {...register("title", {
+                                required: "Property title is required",
+                                minLength: {
+                                    value: 5,
+                                    message: "Title must contain at least 5 characters",
+                                },
+                                maxLength: {
+                                    value: 100,
+                                    message: "Title cannot exceed 100 characters",
+                                },
                             })}
                         />
-
-                        {errors.imageUrl1 && (
-                            <p className="text-sm text-destructive">
-                                {errors.imageUrl1.message}
-                            </p>
-                        )}
+                        <FormError message={errors.title?.message} />
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="imageUrl2">
-                            Image URL 2
-                        </Label>
 
-                        <Input
-                            id="imageUrl2"
-                            placeholder="https://..."
-                            {...register("imageUrl2")}
-                        />
-                    </div>
                     <div className="space-y-2">
-                        <Label htmlFor="imageUrl3">
-                            Image URL 3
-                        </Label>
-
-                        <Input
-                            id="imageUrl3"
-                            placeholder="https://..."
-                            {...register("imageUrl3")}
+                        <Label htmlFor="description">Description *</Label>
+                        <Textarea
+                            id="description"
+                            rows={6}
+                            placeholder="Describe the property, its layout, nearby facilities, and other useful details..."
+                            className="resize-y"
+                            aria-invalid={!!errors.description}
+                            {...register("description", {
+                                required: "Description is required",
+                                minLength: {
+                                    value: 20,
+                                    message: "Description must contain at least 20 characters",
+                                },
+                                maxLength: {
+                                    value: 3000,
+                                    message: "Description cannot exceed 3000 characters",
+                                },
+                            })}
                         />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="imageUrl4">
-                            Image URL 4
-                        </Label>
-
-                        <Input
-                            id="imageUrl4"
-                            placeholder="https://..."
-                            {...register("imageUrl4")}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="imageUrl5">
-                            Image URL 5
-                        </Label>
-
-                        <Input
-                            id="imageUrl5"
-                            placeholder="https://..."
-                            {...register("imageUrl5")}
-                        />
+                        <FormError message={errors.description?.message} />
                     </div>
                 </CardContent>
             </Card>
 
-            <div className="flex justify-end">
+            <Card className="rounded-2xl border-border/70 shadow-sm">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                        <MapPin className="size-5 text-primary" />
+                        Property location
+                    </CardTitle>
+                    <CardDescription>
+                        Give tenants enough information to understand where the property is.
+                    </CardDescription>
+                </CardHeader>
+
+                <CardContent className="grid gap-5 sm:grid-cols-2">
+                    <div className="space-y-2 sm:col-span-2">
+                        <Label htmlFor="address">Street address *</Label>
+                        <Input
+                            id="address"
+                            placeholder="e.g. Road 10, Block C"
+                            aria-invalid={!!errors.address}
+                            {...register("address", {
+                                required: "Street address is required",
+                                maxLength: {
+                                    value: 250,
+                                    message: "Address cannot exceed 250 characters",
+                                },
+                            })}
+                        />
+                        <FormError message={errors.address?.message} />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="city">City *</Label>
+                        <Input
+                            id="city"
+                            placeholder="e.g. Dhaka"
+                            aria-invalid={!!errors.city}
+                            {...register("city", {
+                                required: "City is required",
+                                maxLength: {
+                                    value: 100,
+                                    message: "City cannot exceed 100 characters",
+                                },
+                            })}
+                        />
+                        <FormError message={errors.city?.message} />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-border/70 shadow-sm">
+                <CardHeader>
+                    <CardTitle className="text-lg">Property details</CardTitle>
+                    <CardDescription>
+                        Specify the monthly rent, size, and number of rooms.
+                    </CardDescription>
+                </CardHeader>
+
+                <CardContent className="grid gap-5 sm:grid-cols-2">
+                    <div className="space-y-2">
+                        <Label htmlFor="monthlyRent">Monthly rent (৳) *</Label>
+                        <Input
+                            id="monthlyRent"
+                            type="number"
+                            min="1"
+                            step="any"
+                            placeholder="50000"
+                            aria-invalid={!!errors.monthlyRent}
+                            {...register("monthlyRent", {
+                                ...numericRules,
+                                min: {
+                                    value: 1,
+                                    message: "Rent must be greater than zero",
+                                },
+                            })}
+                        />
+                        <FormError message={errors.monthlyRent?.message} />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="size">Property size (sq ft) *</Label>
+                        <Input
+                            id="size"
+                            type="number"
+                            min="1"
+                            step="any"
+                            placeholder="1200"
+                            aria-invalid={!!errors.size}
+                            {...register("size", {
+                                ...numericRules,
+                                min: {
+                                    value: 1,
+                                    message: "Property size must be greater than zero",
+                                },
+                            })}
+                        />
+                        <FormError message={errors.size?.message} />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="bedrooms">Bedrooms *</Label>
+                        <Input
+                            id="bedrooms"
+                            type="number"
+                            min="1"
+                            step="1"
+                            aria-invalid={!!errors.bedrooms}
+                            {...register("bedrooms", {
+                                ...numericRules,
+                                min: {
+                                    value: 1,
+                                    message: "At least one bedroom is required",
+                                },
+                                validate: {
+                                    integer: (value) =>
+                                        Number.isInteger(value) ||
+                                        "Bedrooms must be a whole number",
+                                },
+                            })}
+                        />
+                        <FormError message={errors.bedrooms?.message} />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="bathrooms">Bathrooms *</Label>
+                        <Input
+                            id="bathrooms"
+                            type="number"
+                            min="1"
+                            step="1"
+                            aria-invalid={!!errors.bathrooms}
+                            {...register("bathrooms", {
+                                ...numericRules,
+                                min: {
+                                    value: 1,
+                                    message: "At least one bathroom is required",
+                                },
+                                validate: {
+                                    integer: (value) =>
+                                        Number.isInteger(value) ||
+                                        "Bathrooms must be a whole number",
+                                },
+                            })}
+                        />
+                        <FormError message={errors.bathrooms?.message} />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-border/70 shadow-sm">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                        <Sparkles className="size-5 text-primary" />
+                        Category and amenities
+                    </CardTitle>
+                    <CardDescription>
+                        Help tenants understand the property type and available facilities.
+                    </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-5">
+                    <div className="space-y-2">
+                        <Label htmlFor="categoryId">Property category *</Label>
+
+                        <Controller
+                            control={control}
+                            name="categoryId"
+                            rules={{ required: "Please select a property category" }}
+                            render={({ field }) => (
+                                <Select
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                >
+                                    <SelectTrigger
+                                        id="categoryId"
+                                        className="w-full"
+                                        aria-invalid={!!errors.categoryId}
+                                    >
+                                        <SelectValue placeholder="Choose a category" />
+                                    </SelectTrigger>
+
+                                    <SelectContent>
+                                        {categories.map((category) => (
+                                            <SelectItem key={category.id} value={category.id}>
+                                                {category.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+
+                        <FormError message={errors.categoryId?.message} />
+
+                        {categories.length === 0 && (
+                            <p className="text-sm text-muted-foreground">
+                                No categories are available. Please contact an administrator.
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="amenities">Amenities</Label>
+                        <Input
+                            id="amenities"
+                            placeholder="Lift, Parking, WiFi, Generator"
+                            {...register("amenities", {
+                                maxLength: {
+                                    value: 1000,
+                                    message: "Amenities cannot exceed 1000 characters",
+                                },
+                            })}
+                        />
+                        <p className="text-xs leading-5 text-muted-foreground">
+                            Separate each amenity with a comma. For example: Lift, Parking,
+                            WiFi.
+                        </p>
+                        <FormError message={errors.amenities?.message} />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-border/70 shadow-sm">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                        <Images className="size-5 text-primary" />
+                        Property images
+                    </CardTitle>
+                    <CardDescription>
+                        Add up to five publicly accessible image URLs. The cover image is
+                        required; the remaining images are optional.
+                    </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-5">
+                    {imageFields.map((imageField, index) => {
+                        const fieldName = imageField.name;
+                        const error = errors[fieldName];
+
+                        return (
+                            <div key={fieldName} className="space-y-2">
+                                <Label htmlFor={fieldName}>
+                                    {imageField.label}
+                                    {imageField.required ? " *" : " (optional)"}
+                                </Label>
+
+                                <Input
+                                    id={fieldName}
+                                    type="url"
+                                    placeholder="https://example.com/property-image.jpg"
+                                    aria-invalid={!!error}
+                                    {...register(fieldName, {
+                                        ...(imageField.required
+                                            ? { required: "A cover image URL is required" }
+                                            : {}),
+                                        validate: (value) =>
+                                            isValidImageUrl(value) ||
+                                            "Enter a valid HTTP or HTTPS URL",
+                                    })}
+                                />
+
+                                <FormError message={error?.message} />
+
+                                {index === 0 && (
+                                    <p className="text-xs leading-5 text-muted-foreground">
+                                        Use a direct image URL that can be accessed publicly.
+                                    </p>
+                                )}
+                            </div>
+                        );
+                    })}
+                </CardContent>
+            </Card>
+
+            {submitError && (
+                <div
+                    className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive"
+                    role="alert"
+                >
+                    {submitError}
+                </div>
+            )}
+
+            <div className="flex flex-col-reverse gap-3 border-t border-border/70 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                <Button
+                    type="button"
+                    variant="outline"
+                    className="rounded-full"
+                    disabled={isPending}
+                    onClick={() => router.back()}
+                >
+                    <ArrowLeft className="mr-2 size-4" />
+                    Cancel
+                </Button>
+
                 <Button
                     type="submit"
+                    className="rounded-full px-6"
                     disabled={isPending}
                 >
                     {isPending
-                        ? mode === "edit"
-                            ? "Saving Changes..."
-                            : "Creating Property..."
-                        : mode === "edit"
-                            ? "Save Changes"
-                            : "Create Property"}
+                        ? isEdit
+                            ? "Saving changes..."
+                            : "Creating property..."
+                        : isEdit
+                            ? "Save changes"
+                            : "Create property"}
+
+                    {!isPending && <ArrowRight className="ml-2 size-4" />}
                 </Button>
             </div>
-
         </form>
     );
-
 }

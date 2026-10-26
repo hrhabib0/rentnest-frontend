@@ -13,6 +13,7 @@ export const registerUser = async (payload: RegisterFormData) => {
         "/auth/register",
         payload
     );
+    console.log(result, "reg result")
     return result.data
 }
 
