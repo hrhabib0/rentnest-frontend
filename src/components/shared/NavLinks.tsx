@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -10,21 +11,34 @@ export default function NavLinks() {
     const pathname = usePathname();
 
     return (
-        <nav className="hidden items-center gap-6 md:flex">
-            {publicNavLinks.map((link) => (
-                <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                        "text-sm font-medium transition-colors hover:text-primary",
-                        pathname === link.href
-                            ? "text-primary"
-                            : "text-muted-foreground"
-                    )}
-                >
-                    {link.label}
-                </Link>
-            ))}
+        <nav
+            aria-label="Main navigation"
+            className="hidden items-center gap-6 md:flex"
+        >
+            {publicNavLinks.map((link) => {
+                const isActive =
+                    pathname === link.href ||
+                    (link.href !== "/" && pathname.startsWith(`${link.href}/`));
+
+                return (
+                    <Link
+                        key={link.href}
+                        href={link.href}
+                        aria-current={isActive ? "page" : undefined}
+                        className={cn(
+                            "relative rounded-sm py-2 text-sm font-medium transition-colors hover:text-primary",
+                            isActive
+                                ? "text-primary"
+                                : "text-muted-foreground"
+                        )}
+                    >
+                        {link.label}
+                        {isActive && (
+                            <span className="absolute inset-x-0 -bottom-1 h-0.5 rounded-full bg-primary" />
+                        )}
+                    </Link>
+                );
+            })}
         </nav>
     );
 }
