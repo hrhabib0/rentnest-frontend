@@ -58,6 +58,7 @@ export default function PropertyCTA({
                     )
                 ) : !userRole ? (
                     <Button
+                        nativeButton={false}
                         className="h-11 w-full rounded-full"
                         render={<Link href="/login" />}
                     >
