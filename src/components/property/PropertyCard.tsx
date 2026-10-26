@@ -141,6 +141,7 @@ export default function PropertyCard({ property }: Props) {
                     </div>
 
                     <Button
+                        nativeButton={false}
                         className="shrink-0 rounded-full px-4"
                         render={<Link href={`/properties/${property.id}`} />}
                     >
