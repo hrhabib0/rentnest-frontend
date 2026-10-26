@@ -1,3 +1,4 @@
+import DashboardHeading from "@/components/dashboard/shared/DashboardHeading";
 import StatsCard from "@/components/dashboard/shared/StatsCard";
 import { getDashboardStats } from "@/services/admin/admin";
 import { Building2, FileText, Users, Wallet } from "lucide-react";
@@ -8,12 +9,10 @@ export default async function AdminDashboardPage() {
 
     return (
         <div className="space-y-8">
-            {/* <DashboardHeading
+            <DashboardHeading
                 title="Admin Dashboard"
                 description="Manage users, properties and platform activities."
-            /> */}
-            {/* <div>{stats.totalUsers}</div> */}
-            <div>admin</div>
+            />
             {/* Stats Cards */}
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                 <StatsCard

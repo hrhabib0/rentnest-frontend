@@ -50,6 +50,7 @@ export default function UsersTable({
                         <TableCell>
                             <div className="flex items-center gap-3">
                                 <Image
+                                    unoptimized
                                     src={
                                         user.profilePhotoUrl ??
                                         "/avatar.png"
