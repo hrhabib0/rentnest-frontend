@@ -32,7 +32,7 @@ export default function HeroSection() {
         <section className="overflow-hidden bg-background">
             <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:py-24">
                 {/* Hero content */}
-                <div>
+                <div className="order-2 md:order-1">
                     <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/15 bg-secondary/70 px-4 py-2 text-sm font-medium text-primary">
                         <Building2 className="size-4" />
                         Smart Rental Management Platform
@@ -75,7 +75,7 @@ export default function HeroSection() {
                     </div>
 
                     {/* Feature highlights */}
-                    <div className="mt-12 grid gap-6 sm:grid-cols-3">
+                    <div className="hidden mt-12 md:grid gap-6 sm:grid-cols-3">
                         {features.map(({ icon: Icon, title, description }) => (
                             <div key={title} className="min-w-0">
                                 <div className="mb-3 flex size-10 items-center justify-center rounded-xl bg-secondary text-primary">
@@ -92,7 +92,7 @@ export default function HeroSection() {
                 </div>
 
                 {/* Property image */}
-                <div className="relative">
+                <div className="relative order-1 md:order-2">
                     <div className="absolute -right-8 -top-8 size-40 rounded-full bg-accent/20 blur-3xl" />
 
                     <div className="relative overflow-hidden rounded-3xl border border-primary/10 bg-secondary/40 p-2 shadow-xl shadow-primary/10">
