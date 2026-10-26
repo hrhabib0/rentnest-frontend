@@ -9,7 +9,6 @@ export function proxy(request: NextRequest) {
 
     const accessToken = request.cookies.get("accessToken")?.value;
 
-
     // No token
     if (!accessToken) {
         if (pathname.startsWith("/dashboard")) {

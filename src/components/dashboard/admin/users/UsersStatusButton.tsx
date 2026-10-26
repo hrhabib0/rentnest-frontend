@@ -3,7 +3,6 @@
 import { useTransition } from "react";
 
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { updateUserStatus } from "@/services/admin/admin";
 
