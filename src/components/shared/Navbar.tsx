@@ -19,8 +19,7 @@ type NavbarProps = {
 };
 
 export default function Navbar({ user }: NavbarProps) {
-    const currentUser =
-        user.success && user.data ? user.data : null;
+    const currentUser =  user.success && user.data ? user.data : null;
 
     return (
         <header className="sticky top-0 z-50 border-b border-border/70 bg-background/90 shadow-sm backdrop-blur-md">

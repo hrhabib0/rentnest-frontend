@@ -71,9 +71,15 @@ export default function CategoriesTable({
                                 </TableCell>
 
                                 <TableCell>
-                                    {new Date(
-                                        category.createdAt
-                                    ).toLocaleDateString()}
+                                    {new Date(category.createdAt).toLocaleDateString(
+                                        "en-GB",
+                                        {
+                                            day: "2-digit",
+                                            month: "short",
+                                            year: "numeric",
+                                            timeZone: "UTC",
+                                        },
+                                    )}
                                 </TableCell>
 
                                 <TableCell>
